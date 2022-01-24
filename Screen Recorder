@@ -1,9 +1,9 @@
-import threading
 import cv2
-import os
 import pyautogui
 import numpy as np
 import time
+import threading
+import os
 
 
 if not os.path.isfile("Stop Video.txt"):
@@ -21,7 +21,7 @@ def check_if_complete():
     for i in a:
         c.append(i.strip('\n').strip(''))
 
-    
+    #CHECKS IF c CONTAINS THE LAST WORDS OF THE SQL SCAN DAT SHOWS THAT THE SCAN ENDED
     z = 'y'
     if z in c:
         return "FINISHED"
@@ -31,9 +31,14 @@ def check_if_complete():
       pass
 
 def stop_recording():
-    i = input("Enter y to stop recording? ")
-    with open("Stop Video.txt", 'a') as f:
-             f.write(i)
+  while True:
+    i = input("Enter y to stop recording? ").lower()
+    if i == 'y':
+        with open("Stop Video.txt", 'a') as f:
+                 f.write(i)
+        break
+    else:
+        print("Invalid Entry!!!")
 
 def start_recording():
     count = 0
