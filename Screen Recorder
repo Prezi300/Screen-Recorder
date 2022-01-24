@@ -1,9 +1,9 @@
+import threading
 import cv2
+import os
 import pyautogui
 import numpy as np
 import time
-import threading
-import os
 
 
 if not os.path.isfile("Stop Video.txt"):
