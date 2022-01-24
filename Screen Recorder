@@ -21,7 +21,7 @@ def check_if_complete():
     for i in a:
         c.append(i.strip('\n').strip(''))
 
-    #CHECKS IF c CONTAINS THE LAST WORDS OF THE SQL SCAN DAT SHOWS THAT THE SCAN ENDED
+    
     z = 'y'
     if z in c:
         return "FINISHED"
