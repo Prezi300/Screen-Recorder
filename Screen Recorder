@@ -1,0 +1,76 @@
+import cv2
+import pyautogui
+import numpy as np
+import time
+import threading
+import os
+
+
+if not os.path.isfile("Stop Video.txt"):
+    with open("Stop Video.txt", 'w') as f:
+        f.write('')
+
+def check_if_complete():
+  try:
+    c = []
+    #OPENS FILE FOR READING
+    with open("Stop Video.txt", 'r') as f:
+            a = f.readlines()
+
+    #TAKES THE CONTENTS OUT OF a AND PUTS THEM IN A ARRAY
+    for i in a:
+        c.append(i.strip('\n').strip(''))
+
+    #CHECKS IF c CONTAINS THE LAST WORDS OF THE SQL SCAN DAT SHOWS THAT THE SCAN ENDED
+    z = 'y'
+    if z in c:
+        return "FINISHED"
+    else:
+        return "SCANNING"
+  except:
+      pass
+
+def stop_recording():
+    i = input("Enter y to stop recording? ")
+    with open("Stop Video.txt", 'a') as f:
+             f.write(i)
+
+def start_recording():
+    count = 0
+    screen = (1280, 1024)
+    four = cv2.VideoWriter_fourcc(*"XVID")
+    output = cv2.VideoWriter(f"output.avi", four, 10.0, (screen))
+
+    fps = 120
+    previous = 0
+   # try:
+    while True:
+        if check_if_complete() == 'FINISHED':
+            print("Recording Finished")
+            with open("Stop Video.txt", 'w') as f:
+                f.write('')
+            break
+        elapsed_time = time.time() - previous
+
+        img = pyautogui.screenshot()
+
+        if elapsed_time > 1.0 / fps:
+            previous = time.time()
+            frame = np.array(img)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            output.write(frame)
+        cv2.waitKey(100)
+        count += 1
+
+    cv2.destroyAllWindows()
+    output.release()
+    filename = input("Enter file name: ")
+    os.rename('output.avi', f'{filename}.avi')
+    print(f"Video saved as: {filename}")
+
+
+if __name__ == '__main__':
+    m1 = threading.Thread(target=start_recording)
+    m1.start()
+    m2 = threading.Thread(target=stop_recording)
+    m2.start()
