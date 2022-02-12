@@ -3,45 +3,18 @@
 import cv2
 import pyautogui
 import numpy as np
-import time
 import threading
 import os
 
-
-if not os.path.isfile("Stop Video.txt"):
-    with open("Stop Video.txt", 'w') as f:
-        f.write('')
-
-def check_if_complete():
-  try:
-    c = []
-    #OPENS FILE FOR READING
-    with open("Stop Video.txt", 'r') as f:
-            a = f.readlines()
-
-    #TAKES THE CONTENTS OUT OF a AND PUTS THEM IN A ARRAY
-    for i in a:
-        c.append(i.strip('\n').strip(''))
-
-    #CHECKS IF c CONTAINS THE LAST WORDS OF THE SQL SCAN DAT SHOWS THAT THE SCAN ENDED
-    z = 'y'
-    if z in c:
-        return "FINISHED"
-    else:
-        return "SCANNING"
-  except:
-      pass
+stop = ''
 
 def stop_recording():
+  global stop
   while True:
-    i = input("Enter y to stop recording? ").lower()
-    if i == 'y':
-        with open("Stop Video.txt", 'a') as f:
-                 f.write(i)
-        break
-    else:
-        print("Invalid Entry!!!")
-
+      i = input("Enter y to stop recording? ").lower()
+      stop = i
+      break
+    
 def start_recording():
     count = 0
     screen = (1280, 1024)
@@ -52,10 +25,7 @@ def start_recording():
     previous = 0
    # try:
     while True:
-        if check_if_complete() == 'FINISHED':
-            print("Recording Finished")
-            with open("Stop Video.txt", 'w') as f:
-                f.write('')
+        if stop == 'y':
             break
         elapsed_time = time.time() - previous
 
@@ -72,8 +42,14 @@ def start_recording():
     cv2.destroyAllWindows()
     output.release()
     filename = input("Enter file name: ")
-    os.rename('output.avi', f'{filename}.avi')
-    print(f"Video saved as: {filename}")
+    try:
+        os.rename('output.avi', f'{filename}.avi')
+        print(f"Video saved as: {filename}.avi")
+    except:
+        print(f"Filename {filename} already exists")
+        filename = input("Enter unique filename: ")
+        os.rename('output.avi', f'{filename}.avi')
+        print(f"Video saved as: {filename}.avi")
 
 
 if __name__ == '__main__':
